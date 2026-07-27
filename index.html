@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crafting an Efficient Search</title>
+  <meta name="description" content="A static webpage recreation of the Crafting an Efficient Search fillable PDF template." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="sheet" aria-label="Crafting an Efficient Search worksheet">
+    <header class="title-row">
+      <h1>Crafting an Efficient Search</h1>
+    </header>
+
+    <section class="line-field issue-field" aria-labelledby="issue-label">
+      <label id="issue-label" for="issue">Issue:</label>
+      <input id="issue" name="issue" type="text" autocomplete="off" placeholder="Put your research issue in a single simple sentence." />
+    </section>
+
+    <section class="builder-grid" aria-label="Search builder">
+      <div class="row-label terms-label">Terms</div>
+
+      <div class="columns" id="columns">
+        <!-- Column 1 -->
+        <section class="column">
+          <div class="term-row">
+            <input id="c1-term" type="text" placeholder="Term" autocomplete="off" />
+            <fieldset class="connector-group" aria-label="Connector group 1">
+              <legend class="sr-only">Connector group 1</legend>
+              <label><input type="radio" name="connector1" value="AND" checked /> AND</label>
+              <label><input type="radio" name="connector1" value="w/p" /> w/p</label>
+              <label><input type="radio" name="connector1" value="w/s" /> w/s</label>
+              <label class="wcount-label"><input type="radio" name="connector1" value="w/#" /> w/<span>#</span></label>
+              <input class="wcount" id="count1" type="number" min="1" step="1" inputmode="numeric" aria-label="Connector count 1" placeholder="#" />
+            </fieldset>
+          </div>
+
+          <div class="alt-row"><span>OR</span><input id="c1-alt1" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c1-alt2" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c1-alt3" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c1-alt4" type="text" placeholder="Alternative" autocomplete="off" /></div>
+        </section>
+
+        <!-- Column 2 -->
+        <section class="column">
+          <div class="term-row">
+            <input id="c2-term" type="text" placeholder="Term" autocomplete="off" />
+            <fieldset class="connector-group" aria-label="Connector group 2">
+              <legend class="sr-only">Connector group 2</legend>
+              <label><input type="radio" name="connector2" value="AND" checked /> AND</label>
+              <label><input type="radio" name="connector2" value="w/p" /> w/p</label>
+              <label><input type="radio" name="connector2" value="w/s" /> w/s</label>
+              <label class="wcount-label"><input type="radio" name="connector2" value="w/#" /> w/<span>#</span></label>
+              <input class="wcount" id="count2" type="number" min="1" step="1" inputmode="numeric" aria-label="Connector count 2" placeholder="#" />
+            </fieldset>
+          </div>
+
+          <div class="alt-row"><span>OR</span><input id="c2-alt1" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c2-alt2" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c2-alt3" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c2-alt4" type="text" placeholder="Alternative" autocomplete="off" /></div>
+        </section>
+
+        <!-- Column 3 -->
+        <section class="column">
+          <div class="term-row">
+            <input id="c3-term" type="text" placeholder="Term" autocomplete="off" />
+            <fieldset class="connector-group" aria-label="Connector group 3">
+              <legend class="sr-only">Connector group 3</legend>
+              <label><input type="radio" name="connector3" value="AND" checked /> AND</label>
+              <label><input type="radio" name="connector3" value="w/p" /> w/p</label>
+              <label><input type="radio" name="connector3" value="w/s" /> w/s</label>
+              <label class="wcount-label"><input type="radio" name="connector3" value="w/#" /> w/<span>#</span></label>
+              <input class="wcount" id="count3" type="number" min="1" step="1" inputmode="numeric" aria-label="Connector count 3" placeholder="#" />
+            </fieldset>
+          </div>
+
+          <div class="alt-row"><span>OR</span><input id="c3-alt1" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c3-alt2" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c3-alt3" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c3-alt4" type="text" placeholder="Alternative" autocomplete="off" /></div>
+        </section>
+
+        <!-- Column 4 -->
+        <section class="column">
+          <div class="term-row">
+            <input id="c4-term" type="text" placeholder="Term" autocomplete="off" />
+            <fieldset class="connector-group" aria-label="Connector group 4">
+              <legend class="sr-only">Connector group 4</legend>
+              <label><input type="radio" name="connector4" value="AND" checked /> AND</label>
+              <label><input type="radio" name="connector4" value="w/p" /> w/p</label>
+              <label><input type="radio" name="connector4" value="w/s" /> w/s</label>
+              <label class="wcount-label"><input type="radio" name="connector4" value="w/#" /> w/<span>#</span></label>
+              <input class="wcount" id="count4" type="number" min="1" step="1" inputmode="numeric" aria-label="Connector count 4" placeholder="#" />
+            </fieldset>
+          </div>
+
+          <div class="alt-row"><span>OR</span><input id="c4-alt1" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c4-alt2" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c4-alt3" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c4-alt4" type="text" placeholder="Alternative" autocomplete="off" /></div>
+        </section>
+
+        <!-- Column 5 -->
+        <section class="column">
+          <div class="term-row">
+            <input id="c5-term" type="text" placeholder="Term" autocomplete="off" />
+          </div>
+
+          <div class="alt-row"><span>OR</span><input id="c5-alt1" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c5-alt2" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c5-alt3" type="text" placeholder="Alternative" autocomplete="off" /></div>
+          <div class="alt-row"><span>OR</span><input id="c5-alt4" type="text" placeholder="Alternative" autocomplete="off" /></div>
+        </section>
+      </div>
+
+      <div class="row-label alternatives-label">Alternatives</div>
+    </section>
+
+    <section class="search-section" aria-labelledby="search-label">
+      <div class="section-title" id="search-label">Search</div>
+      <textarea id="searchOutput" readonly spellcheck="false" placeholder="Your assembled search string will appear here."></textarea>
+    </section>
+
+    <section class="line-field database-field" aria-labelledby="database-label">
+      <label id="database-label" for="database">Database:</label>
+      <input id="database" name="database" type="text" autocomplete="off" placeholder="Choose the smallest, most precise database for your search." />
+    </section>
+
+    <section class="help-grid" aria-label="Search strategy tips">
+      <div class="help-box help-left">
+        <p><strong>Issue:</strong> Put your research issue in a single simple sentence.</p>
+        <p><strong>Terms:</strong> Go to your issue sentence and underline the key legal and factual terms.</p>
+        <p><strong>Alternatives:</strong> Consider all reasonable synonyms (and antonyms) for your key terms.</p>
+        <p><strong>Expanders:</strong> Use the root expander and wild card characters to increase alternatives.</p>
+        <p><strong>Connectors:</strong> Link your ideas with the or, and, or other connectors.</p>
+        <p><strong>Database:</strong> Choose the smallest, most precise database for your search.</p>
+      </div>
+
+      <div class="help-box help-right">
+        <p><strong>Root Expander:</strong> <span class="mono">!</span> (test! = test, tested, testing...)</p>
+        <p><strong>Wild Card:</strong> <span class="mono">*</span> (dr*ve = drive or drove)</p>
+        <p><strong>Connectors:</strong></p>
+        <ul>
+          <li>and</li>
+          <li>or</li>
+          <li>w/s (same sentence)</li>
+          <li>w/p (same paragraph)</li>
+          <li>w/# (within "#" words, e.g.: w/5)</li>
+        </ul>
+      </div>
+    </section>
+
+    <button id="clearForm" class="clear-button" type="button">Clear Form</button>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
