@@ -1,42 +1,123 @@
 (() => {
   const root = document.documentElement;
-  const viewport = document.getElementById('viewport');
-  const clearButton = document.getElementById('clearForm');
-  const fields = [...document.querySelectorAll('input, textarea')];
-  const storageKey = 'crafting-efficient-search-v2';
+  const sheet = document.getElementById('sheet');
+  const form = document.getElementById('worksheet');
+  const storageKey = 'crafting-efficient-search-v3';
 
-  const fit = () => {
-    const sheetW = 1760;
-    const sheetH = 1360;
-    const padding = 16;
-    const scale = Math.min((window.innerWidth - padding) / sheetW, (window.innerHeight - padding) / sheetH, 1);
-    root.style.setProperty('--scale', String(Math.max(scale, 0.35)));
-    viewport.style.width = `${sheetW * Math.max(scale, 0.35)}px`;
-    viewport.style.height = `${sheetH * Math.max(scale, 0.35)}px`;
+  const columns = [161, 486, 811, 1138, 1463];
+  const altColumns = [162, 486, 811, 1135, 1460];
+  const termY = 285;
+  const altYs = [402, 515, 627, 740];
+  const radioXs = [409, 735, 1059, 1384];
+  const radioYs = [247, 281, 314, 348];
+
+  const makeInput = (type, className, id, left, top, width, height, extra = {}) => {
+    const el = document.createElement(type === 'textarea' ? 'textarea' : 'input');
+    el.className = className;
+    el.id = id;
+    if (el.tagName === 'INPUT') el.type = extra.type || 'text';
+    el.name = id;
+    el.autocomplete = 'off';
+    el.spellcheck = false;
+    el.placeholder = extra.placeholder || '';
+    el.style.left = `${left}px`;
+    el.style.top = `${top}px`;
+    el.style.width = `${width}px`;
+    el.style.height = `${height}px`;
+    if (extra.ariaLabel) el.setAttribute('aria-label', extra.ariaLabel);
+    return el;
   };
 
-  const updateConnectorStates = () => {
-    for (const group of document.querySelectorAll('.connectors')) {
-      const checked = group.querySelector('input[type="radio"]:checked');
-      group.dataset.active = checked ? checked.value : 'AND';
-    }
+  const makeRadio = (name, value, left, top) => {
+    const el = document.createElement('input');
+    el.type = 'radio';
+    el.className = 'radio-box';
+    el.name = name;
+    el.value = value;
+    el.style.left = `${left}px`;
+    el.style.top = `${top}px`;
+    el.setAttribute('aria-label', `${name} ${value}`);
+    return el;
+  };
+
+  // Issue, search, database, and clear button overlay.
+  form.appendChild(
+    makeInput('input', 'field issue-field', 'issue', 192, 176, 1498, 34, {
+      ariaLabel: 'Issue'
+    })
+  );
+
+  // Term and alternative fields.
+  columns.forEach((left, index) => {
+    form.appendChild(
+      makeInput('input', 'field term-field', `term-${index + 1}`, left, termY, 244, 61, {
+        ariaLabel: `Term ${index + 1}`
+      })
+    );
+
+    altYs.forEach((top, altIndex) => {
+      form.appendChild(
+        makeInput('input', 'field alt-field', `c${index + 1}-alt${altIndex + 1}`, altColumns[index], top, 243, 58, {
+          ariaLabel: `Alternative ${index + 1}.${altIndex + 1}`
+        })
+      );
+    });
+  });
+
+  // Search area and database line.
+  form.appendChild(
+    makeInput('textarea', 'field search-field', 'search', 106, 662, 1570, 382, {
+      ariaLabel: 'Search'
+    })
+  );
+
+  form.appendChild(
+    makeInput('input', 'field database-field', 'database', 259, 1048, 1467, 30, {
+      ariaLabel: 'Database'
+    })
+  );
+
+  // Connector checkboxes.
+  radioXs.forEach((left, columnIndex) => {
+    ['AND', 'w/p', 'w/s', 'w/#'].forEach((value, radioIndex) => {
+      const radio = makeRadio(`connector-${columnIndex + 1}`, value, left, radioYs[radioIndex]);
+      if (radioIndex === 0) radio.checked = true;
+      form.appendChild(radio);
+    });
+  });
+
+  const clearButton = document.createElement('button');
+  clearButton.type = 'button';
+  clearButton.className = 'clear-btn';
+  clearButton.id = 'clearForm';
+  clearButton.textContent = 'Clear Form';
+  clearButton.setAttribute('aria-label', 'Clear Form');
+  form.appendChild(clearButton);
+
+  const allFields = [...form.querySelectorAll('input.field, textarea.field')];
+  const allRadios = [...form.querySelectorAll('input[type="radio"]')];
+  const radiosByGroup = [...new Set(allRadios.map((radio) => radio.name))].map((name) =>
+    allRadios.filter((radio) => radio.name === name)
+  );
+
+  const fit = () => {
+    const w = root.clientWidth || window.innerWidth;
+    const h = window.innerHeight;
+    const scale = Math.min(w / 1760, h / 1360, 1);
+    root.style.setProperty('--scale', String(scale));
   };
 
   const save = () => {
-    updateConnectorStates();
     const data = {};
-    for (const field of fields) {
-      if (!field.id && !field.name) continue;
-      if (field.type === 'radio') {
-        if (field.checked) data[field.name] = field.value;
-        continue;
-      }
-      data[field.id || field.name] = field.value;
+    for (const field of allFields) data[field.id] = field.value;
+    for (const group of radiosByGroup) {
+      const checked = group.find((radio) => radio.checked);
+      if (checked) data[checked.name] = checked.value;
     }
     try {
       localStorage.setItem(storageKey, JSON.stringify(data));
     } catch {
-      // Ignore storage failures.
+      // Ignore storage errors.
     }
   };
 
@@ -45,14 +126,18 @@
       const raw = localStorage.getItem(storageKey);
       if (!raw) return;
       const data = JSON.parse(raw);
-      for (const [key, value] of Object.entries(data)) {
-        const radio = document.querySelector(`input[type="radio"][name="${CSS.escape(key)}"][value="${CSS.escape(value)}"]`);
-        if (radio) {
-          radio.checked = true;
-          continue;
+      for (const field of allFields) {
+        if (Object.prototype.hasOwnProperty.call(data, field.id)) {
+          field.value = data[field.id];
         }
-        const el = document.getElementById(key) || document.querySelector(`[name="${CSS.escape(key)}"]`);
-        if (el && 'value' in el) el.value = value;
+      }
+      for (const group of radiosByGroup) {
+        const groupName = group[0]?.name;
+        const value = data[groupName];
+        if (value) {
+          const radio = group.find((item) => item.value === value);
+          if (radio) radio.checked = true;
+        }
       }
     } catch {
       // Ignore corrupt storage.
@@ -60,25 +145,20 @@
   };
 
   const clear = () => {
-    for (const field of fields) {
-      if (field.type === 'radio') continue;
-      field.value = '';
-    }
-    for (const radio of document.querySelectorAll('input[type="radio"]')) {
-      radio.checked = radio.value === 'AND';
+    for (const field of allFields) field.value = '';
+    for (const group of radiosByGroup) {
+      const first = group[0];
+      if (first) first.checked = true;
     }
     save();
   };
 
-  fields.forEach((field) => {
-    field.addEventListener('input', save);
-    field.addEventListener('change', save);
-  });
+  form.addEventListener('input', save);
+  form.addEventListener('change', save);
   clearButton.addEventListener('click', clear);
   window.addEventListener('resize', fit);
   window.addEventListener('orientationchange', fit);
 
   restore();
   fit();
-  save();
 })();
