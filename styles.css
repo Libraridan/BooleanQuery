@@ -131,24 +131,26 @@ body {
 }
 
 .term-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 88px;
-  align-items: start;
-  gap: 10px;
+  position: relative;
+  min-height: 82px;
 }
 
 .term-row--single {
-  grid-template-columns: 1fr;
+  min-height: 46px;
 }
 
 .term-row input[type="text"] {
   width: 100%;
   min-width: 0;
-  height: 46px;
+  height: 38px;
   border: 3px solid var(--ink);
   background: #fff;
-  padding: 7px 10px;
+  padding: 7px 96px 7px 10px;
   font-size: 1rem;
+}
+
+.term-row--single input[type="text"] {
+  padding-right: 10px;
 }
 
 .connector {
@@ -158,6 +160,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 88px;
 }
 
 .connector__choice {
@@ -221,7 +227,7 @@ body {
 }
 
 .alt-row {
-  margin-top: 12px;
+  margin-top: 10px;
   display: grid;
   gap: 6px;
   justify-items: center;
