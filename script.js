@@ -2,7 +2,7 @@
   const root = document.documentElement;
   const sheet = document.getElementById('sheet');
   const form = document.getElementById('worksheet');
-  const storageKey = 'crafting-efficient-search-v3';
+  const storageKey = 'crafting-efficient-search-v4';
 
   const columns = [161, 486, 811, 1138, 1463];
   const altColumns = [162, 486, 811, 1135, 1460];
@@ -40,9 +40,14 @@
     return el;
   };
 
+  const termFieldIds = columns.map((_, index) => [
+    `term-${index + 1}`,
+    ...Array.from({ length: 4 }, (_, altIndex) => `c${index + 1}-alt${altIndex + 1}`)
+  ]).flat();
+
   // Issue, search, database, and clear button overlay.
   form.appendChild(
-    makeInput('input', 'field issue-field', 'issue', 192, 176, 1498, 34, {
+    makeInput('input', 'field issue-field', 'issue', 232, 174, 1482, 34, {
       ariaLabel: 'Issue'
     })
   );
@@ -65,11 +70,11 @@
   });
 
   // Search area and database line.
-  form.appendChild(
-    makeInput('textarea', 'field search-field', 'search', 106, 662, 1570, 382, {
-      ariaLabel: 'Search'
-    })
-  );
+  const searchField = makeInput('textarea', 'field search-field', 'search', 106, 662, 1570, 382, {
+    ariaLabel: 'Search'
+  });
+  searchField.readOnly = true;
+  form.appendChild(searchField);
 
   form.appendChild(
     makeInput('input', 'field database-field', 'database', 259, 1048, 1467, 30, {
@@ -105,6 +110,52 @@
     const h = window.innerHeight;
     const scale = Math.min(w / 1760, h / 1360, 1);
     root.style.setProperty('--scale', String(scale));
+  };
+
+  const normalize = (value) => value.trim().replace(/\s+/g, ' ');
+
+  const buildGroupExpression = (values) => {
+    const items = values.map(normalize).filter(Boolean);
+    if (items.length === 0) return '';
+    if (items.length === 1) return items[0];
+    return `(${items.join(' OR ')})`;
+  };
+
+  const selectedConnector = (groupName) => {
+    const group = radiosByGroup.find((items) => items[0]?.name === groupName);
+    const checked = group?.find((radio) => radio.checked);
+    return checked?.value || 'AND';
+  };
+
+  const buildSearch = () => {
+    const columnsExpr = columns.map((_, index) => {
+      const values = [
+        document.getElementById(`term-${index + 1}`)?.value || '',
+        ...Array.from({ length: 4 }, (_, altIndex) => document.getElementById(`c${index + 1}-alt${altIndex + 1}`)?.value || '')
+      ];
+      return buildGroupExpression(values);
+    }).filter(Boolean);
+
+    if (!columnsExpr.length) return '';
+
+    let result = columnsExpr[0];
+    for (let i = 0; i < columnsExpr.length - 1; i += 1) {
+      const connector = selectedConnector(`connector-${i + 1}`);
+      const nextExpr = columnsExpr[i + 1];
+      if (connector === 'w/#') {
+        const countInput = document.getElementById(`count${i + 1}`);
+        const distance = normalize(countInput?.value || '');
+        result += ` w/${distance || '#'} ${nextExpr}`;
+      } else {
+        result += ` ${connector} ${nextExpr}`;
+      }
+    }
+
+    return result;
+  };
+
+  const updateSearchOutput = () => {
+    searchField.value = buildSearch();
   };
 
   const save = () => {
@@ -144,21 +195,27 @@
     }
   };
 
+  const sync = () => {
+    updateSearchOutput();
+    save();
+  };
+
   const clear = () => {
     for (const field of allFields) field.value = '';
     for (const group of radiosByGroup) {
       const first = group[0];
       if (first) first.checked = true;
     }
-    save();
+    sync();
   };
 
-  form.addEventListener('input', save);
-  form.addEventListener('change', save);
+  form.addEventListener('input', sync);
+  form.addEventListener('change', sync);
   clearButton.addEventListener('click', clear);
   window.addEventListener('resize', fit);
   window.addEventListener('orientationchange', fit);
 
   restore();
+  updateSearchOutput();
   fit();
 })();
