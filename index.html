@@ -4,127 +4,134 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Crafting an Efficient Search</title>
-  <meta name="description" content="Interactive recreation of the Crafting an Efficient Search worksheet." />
+  <meta name="description" content="A web recreation of the Crafting an Efficient Search worksheet." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="page" aria-label="Crafting an Efficient Search worksheet">
-    <header class="page__header">
-      <h1>Crafting an Efficient Search</h1>
-    </header>
+  <div class="viewport" id="viewport">
+    <main class="sheet" aria-label="Crafting an Efficient Search worksheet">
+      <h1 class="title">Crafting an Efficient Search</h1>
 
-    <form id="worksheet" class="worksheet" autocomplete="off">
-      <section class="line line--issue" aria-labelledby="issue-label">
-        <label id="issue-label" for="issue">Issue:</label>
-        <input id="issue" name="issue" type="text" placeholder="Put your research issue in a single simple sentence." />
+      <section class="issue" aria-label="Issue">
+        <label class="issue__label" for="issue">Issue:</label>
+        <input id="issue" name="issue" class="issue__input" type="text" />
       </section>
 
-      <section class="builder" aria-label="Search terms and alternatives">
-        <div class="builder__label builder__label--terms">Terms</div>
+      <section class="terms" aria-label="Search terms and alternatives">
+        <div class="terms__label terms__label--top">Terms</div>
+        <div class="terms__label terms__label--side">Alternatives</div>
 
-        <div class="builder__columns">
-          <section class="term-column" aria-label="Column 1">
-            <div class="term-row">
-              <input id="c1-term" type="text" aria-label="Term 1" />
-              <fieldset class="connector" data-connector-group="1" aria-label="Connector group 1">
-                <label class="connector__choice"><input type="radio" name="connector1" value="AND" checked /> <span>AND</span></label>
-                <label class="connector__choice"><input type="radio" name="connector1" value="w/p" /> <span>w/p</span></label>
-                <label class="connector__choice"><input type="radio" name="connector1" value="w/s" /> <span>w/s</span></label>
-                <label class="connector__choice connector__choice--distance">
-                  <input type="radio" name="connector1" value="w/#" />
-                  <span>w/</span>
-                  <input class="distance" id="count1" type="number" min="1" step="1" inputmode="numeric" aria-label="Distance for connector group 1" placeholder="#" />
-                </label>
-              </fieldset>
-            </div>
-            <div class="alt-row"><span>OR</span><input id="c1-alt1" type="text" aria-label="Alternative 1.1" /></div>
-            <div class="alt-row"><span>OR</span><input id="c1-alt2" type="text" aria-label="Alternative 1.2" /></div>
-            <div class="alt-row"><span>OR</span><input id="c1-alt3" type="text" aria-label="Alternative 1.3" /></div>
-            <div class="alt-row"><span>OR</span><input id="c1-alt4" type="text" aria-label="Alternative 1.4" /></div>
-          </section>
+        <div class="columns">
+          <div class="column column--with-connectors" data-column="1">
+            <input class="term-input" id="c1-term" name="c1-term" type="text" aria-label="Term 1" />
+            <fieldset class="connectors" aria-label="Connector choices for term 1">
+              <label><input type="radio" name="connector1" value="AND" checked /><span>AND</span></label>
+              <label><input type="radio" name="connector1" value="w/p" /><span>w/p</span></label>
+              <label><input type="radio" name="connector1" value="w/s" /><span>w/s</span></label>
+              <label class="distance-choice">
+                <input type="radio" name="connector1" value="w/#" />
+                <span>w/</span>
+                <input id="count1" name="count1" class="distance" type="number" min="1" inputmode="numeric" aria-label="Distance for term 1" />
+              </label>
+            </fieldset>
+            <div class="or-label or-label--1">OR</div>
+            <input class="alt-input alt-input--1" id="c1-alt1" name="c1-alt1" type="text" aria-label="Alternative 1.1" />
+            <div class="or-label or-label--2">OR</div>
+            <input class="alt-input alt-input--2" id="c1-alt2" name="c1-alt2" type="text" aria-label="Alternative 1.2" />
+            <div class="or-label or-label--3">OR</div>
+            <input class="alt-input alt-input--3" id="c1-alt3" name="c1-alt3" type="text" aria-label="Alternative 1.3" />
+            <div class="or-label or-label--4">OR</div>
+            <input class="alt-input alt-input--4" id="c1-alt4" name="c1-alt4" type="text" aria-label="Alternative 1.4" />
+          </div>
 
-          <section class="term-column" aria-label="Column 2">
-            <div class="term-row">
-              <input id="c2-term" type="text" aria-label="Term 2" />
-              <fieldset class="connector" data-connector-group="2" aria-label="Connector group 2">
-                <label class="connector__choice"><input type="radio" name="connector2" value="AND" checked /> <span>AND</span></label>
-                <label class="connector__choice"><input type="radio" name="connector2" value="w/p" /> <span>w/p</span></label>
-                <label class="connector__choice"><input type="radio" name="connector2" value="w/s" /> <span>w/s</span></label>
-                <label class="connector__choice connector__choice--distance">
-                  <input type="radio" name="connector2" value="w/#" />
-                  <span>w/</span>
-                  <input class="distance" id="count2" type="number" min="1" step="1" inputmode="numeric" aria-label="Distance for connector group 2" placeholder="#" />
-                </label>
-              </fieldset>
-            </div>
-            <div class="alt-row"><span>OR</span><input id="c2-alt1" type="text" aria-label="Alternative 2.1" /></div>
-            <div class="alt-row"><span>OR</span><input id="c2-alt2" type="text" aria-label="Alternative 2.2" /></div>
-            <div class="alt-row"><span>OR</span><input id="c2-alt3" type="text" aria-label="Alternative 2.3" /></div>
-            <div class="alt-row"><span>OR</span><input id="c2-alt4" type="text" aria-label="Alternative 2.4" /></div>
-          </section>
+          <div class="column column--with-connectors" data-column="2">
+            <input class="term-input" id="c2-term" name="c2-term" type="text" aria-label="Term 2" />
+            <fieldset class="connectors" aria-label="Connector choices for term 2">
+              <label><input type="radio" name="connector2" value="AND" checked /><span>AND</span></label>
+              <label><input type="radio" name="connector2" value="w/p" /><span>w/p</span></label>
+              <label><input type="radio" name="connector2" value="w/s" /><span>w/s</span></label>
+              <label class="distance-choice">
+                <input type="radio" name="connector2" value="w/#" />
+                <span>w/</span>
+                <input id="count2" name="count2" class="distance" type="number" min="1" inputmode="numeric" aria-label="Distance for term 2" />
+              </label>
+            </fieldset>
+            <div class="or-label or-label--1">OR</div>
+            <input class="alt-input alt-input--1" id="c2-alt1" name="c2-alt1" type="text" aria-label="Alternative 2.1" />
+            <div class="or-label or-label--2">OR</div>
+            <input class="alt-input alt-input--2" id="c2-alt2" name="c2-alt2" type="text" aria-label="Alternative 2.2" />
+            <div class="or-label or-label--3">OR</div>
+            <input class="alt-input alt-input--3" id="c2-alt3" name="c2-alt3" type="text" aria-label="Alternative 2.3" />
+            <div class="or-label or-label--4">OR</div>
+            <input class="alt-input alt-input--4" id="c2-alt4" name="c2-alt4" type="text" aria-label="Alternative 2.4" />
+          </div>
 
-          <section class="term-column" aria-label="Column 3">
-            <div class="term-row">
-              <input id="c3-term" type="text" aria-label="Term 3" />
-              <fieldset class="connector" data-connector-group="3" aria-label="Connector group 3">
-                <label class="connector__choice"><input type="radio" name="connector3" value="AND" checked /> <span>AND</span></label>
-                <label class="connector__choice"><input type="radio" name="connector3" value="w/p" /> <span>w/p</span></label>
-                <label class="connector__choice"><input type="radio" name="connector3" value="w/s" /> <span>w/s</span></label>
-                <label class="connector__choice connector__choice--distance">
-                  <input type="radio" name="connector3" value="w/#" />
-                  <span>w/</span>
-                  <input class="distance" id="count3" type="number" min="1" step="1" inputmode="numeric" aria-label="Distance for connector group 3" placeholder="#" />
-                </label>
-              </fieldset>
-            </div>
-            <div class="alt-row"><span>OR</span><input id="c3-alt1" type="text" aria-label="Alternative 3.1" /></div>
-            <div class="alt-row"><span>OR</span><input id="c3-alt2" type="text" aria-label="Alternative 3.2" /></div>
-            <div class="alt-row"><span>OR</span><input id="c3-alt3" type="text" aria-label="Alternative 3.3" /></div>
-            <div class="alt-row"><span>OR</span><input id="c3-alt4" type="text" aria-label="Alternative 3.4" /></div>
-          </section>
+          <div class="column column--with-connectors" data-column="3">
+            <input class="term-input" id="c3-term" name="c3-term" type="text" aria-label="Term 3" />
+            <fieldset class="connectors" aria-label="Connector choices for term 3">
+              <label><input type="radio" name="connector3" value="AND" checked /><span>AND</span></label>
+              <label><input type="radio" name="connector3" value="w/p" /><span>w/p</span></label>
+              <label><input type="radio" name="connector3" value="w/s" /><span>w/s</span></label>
+              <label class="distance-choice">
+                <input type="radio" name="connector3" value="w/#" />
+                <span>w/</span>
+                <input id="count3" name="count3" class="distance" type="number" min="1" inputmode="numeric" aria-label="Distance for term 3" />
+              </label>
+            </fieldset>
+            <div class="or-label or-label--1">OR</div>
+            <input class="alt-input alt-input--1" id="c3-alt1" name="c3-alt1" type="text" aria-label="Alternative 3.1" />
+            <div class="or-label or-label--2">OR</div>
+            <input class="alt-input alt-input--2" id="c3-alt2" name="c3-alt2" type="text" aria-label="Alternative 3.2" />
+            <div class="or-label or-label--3">OR</div>
+            <input class="alt-input alt-input--3" id="c3-alt3" name="c3-alt3" type="text" aria-label="Alternative 3.3" />
+            <div class="or-label or-label--4">OR</div>
+            <input class="alt-input alt-input--4" id="c3-alt4" name="c3-alt4" type="text" aria-label="Alternative 3.4" />
+          </div>
 
-          <section class="term-column" aria-label="Column 4">
-            <div class="term-row">
-              <input id="c4-term" type="text" aria-label="Term 4" />
-              <fieldset class="connector" data-connector-group="4" aria-label="Connector group 4">
-                <label class="connector__choice"><input type="radio" name="connector4" value="AND" checked /> <span>AND</span></label>
-                <label class="connector__choice"><input type="radio" name="connector4" value="w/p" /> <span>w/p</span></label>
-                <label class="connector__choice"><input type="radio" name="connector4" value="w/s" /> <span>w/s</span></label>
-                <label class="connector__choice connector__choice--distance">
-                  <input type="radio" name="connector4" value="w/#" />
-                  <span>w/</span>
-                  <input class="distance" id="count4" type="number" min="1" step="1" inputmode="numeric" aria-label="Distance for connector group 4" placeholder="#" />
-                </label>
-              </fieldset>
-            </div>
-            <div class="alt-row"><span>OR</span><input id="c4-alt1" type="text" aria-label="Alternative 4.1" /></div>
-            <div class="alt-row"><span>OR</span><input id="c4-alt2" type="text" aria-label="Alternative 4.2" /></div>
-            <div class="alt-row"><span>OR</span><input id="c4-alt3" type="text" aria-label="Alternative 4.3" /></div>
-            <div class="alt-row"><span>OR</span><input id="c4-alt4" type="text" aria-label="Alternative 4.4" /></div>
-          </section>
+          <div class="column column--with-connectors" data-column="4">
+            <input class="term-input" id="c4-term" name="c4-term" type="text" aria-label="Term 4" />
+            <fieldset class="connectors" aria-label="Connector choices for term 4">
+              <label><input type="radio" name="connector4" value="AND" checked /><span>AND</span></label>
+              <label><input type="radio" name="connector4" value="w/p" /><span>w/p</span></label>
+              <label><input type="radio" name="connector4" value="w/s" /><span>w/s</span></label>
+              <label class="distance-choice">
+                <input type="radio" name="connector4" value="w/#" />
+                <span>w/</span>
+                <input id="count4" name="count4" class="distance" type="number" min="1" inputmode="numeric" aria-label="Distance for term 4" />
+              </label>
+            </fieldset>
+            <div class="or-label or-label--1">OR</div>
+            <input class="alt-input alt-input--1" id="c4-alt1" name="c4-alt1" type="text" aria-label="Alternative 4.1" />
+            <div class="or-label or-label--2">OR</div>
+            <input class="alt-input alt-input--2" id="c4-alt2" name="c4-alt2" type="text" aria-label="Alternative 4.2" />
+            <div class="or-label or-label--3">OR</div>
+            <input class="alt-input alt-input--3" id="c4-alt3" name="c4-alt3" type="text" aria-label="Alternative 4.3" />
+            <div class="or-label or-label--4">OR</div>
+            <input class="alt-input alt-input--4" id="c4-alt4" name="c4-alt4" type="text" aria-label="Alternative 4.4" />
+          </div>
 
-          <section class="term-column" aria-label="Column 5">
-            <div class="term-row term-row--single">
-              <input id="c5-term" type="text" aria-label="Term 5" />
-            </div>
-            <div class="alt-row"><span>OR</span><input id="c5-alt1" type="text" aria-label="Alternative 5.1" /></div>
-            <div class="alt-row"><span>OR</span><input id="c5-alt2" type="text" aria-label="Alternative 5.2" /></div>
-            <div class="alt-row"><span>OR</span><input id="c5-alt3" type="text" aria-label="Alternative 5.3" /></div>
-            <div class="alt-row"><span>OR</span><input id="c5-alt4" type="text" aria-label="Alternative 5.4" /></div>
-          </section>
+          <div class="column column--single" data-column="5">
+            <input class="term-input" id="c5-term" name="c5-term" type="text" aria-label="Term 5" />
+            <div class="or-label or-label--1">OR</div>
+            <input class="alt-input alt-input--1" id="c5-alt1" name="c5-alt1" type="text" aria-label="Alternative 5.1" />
+            <div class="or-label or-label--2">OR</div>
+            <input class="alt-input alt-input--2" id="c5-alt2" name="c5-alt2" type="text" aria-label="Alternative 5.2" />
+            <div class="or-label or-label--3">OR</div>
+            <input class="alt-input alt-input--3" id="c5-alt3" name="c5-alt3" type="text" aria-label="Alternative 5.3" />
+            <div class="or-label or-label--4">OR</div>
+            <input class="alt-input alt-input--4" id="c5-alt4" name="c5-alt4" type="text" aria-label="Alternative 5.4" />
+          </div>
         </div>
-
-        <div class="builder__label builder__label--alternatives">Alternatives</div>
       </section>
 
-      <section class="line line--search" aria-labelledby="search-label">
-        <label id="search-label" for="searchOutput">Search</label>
-        <textarea id="searchOutput" readonly spellcheck="false" aria-describedby="search-help" placeholder="Your assembled search string will appear here."></textarea>
+      <section class="search" aria-label="Search">
+        <label class="search__label" for="search">Search</label>
+        <textarea id="search" name="search" class="search__field" spellcheck="false" aria-label="Search"></textarea>
       </section>
 
-      <section class="line line--database" aria-labelledby="database-label">
-        <label id="database-label" for="database">Database:</label>
-        <input id="database" name="database" type="text" placeholder="Choose the smallest, most precise database for your search." />
+      <section class="database" aria-label="Database">
+        <label class="database__label" for="database">Database:</label>
+        <input id="database" name="database" class="database__field" type="text" aria-label="Database" />
       </section>
 
       <section class="notes" aria-label="Search strategy notes">
@@ -137,26 +144,21 @@
           <p><strong>Database:</strong> Choose the smallest, most precise database for your search.</p>
         </div>
 
-        <div class="notes__box notes__box--right" id="search-help">
+        <div class="notes__box notes__box--right">
           <p><strong>Root Expander:</strong> <span class="mono">!</span> (test! = test, tested, testing...)</p>
           <p><strong>Wild Card:</strong> <span class="mono">*</span> (dr*ve = drive or drove)</p>
           <p><strong>Connectors:</strong></p>
-          <ul>
-            <li>and</li>
-            <li>or</li>
-            <li>w/s (same sentence)</li>
-            <li>w/p (same paragraph)</li>
-            <li>w/# (within "#" words, e.g.: w/5)</li>
-          </ul>
+          <p class="indented">and</p>
+          <p class="indented">or</p>
+          <p class="indented">w/s (same sentence)</p>
+          <p class="indented">w/p (same paragraph)</p>
+          <p class="indented">w/# (within "#" words, e.g.: w/5)</p>
         </div>
       </section>
 
-      <div class="actions">
-        <button id="clearForm" type="button">Clear Form</button>
-      </div>
-    </form>
-  </main>
-
+      <button id="clearForm" class="clear" type="button">Clear Form</button>
+    </main>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
