@@ -1,21 +1,26 @@
 (() => {
   const root = document.documentElement;
-  const sheet = document.getElementById('sheet');
   const form = document.getElementById('worksheet');
-  const storageKey = 'crafting-efficient-search-v4';
+  const storageKey = 'crafting-efficient-search-v5';
 
   const columns = [161, 486, 811, 1138, 1463];
   const altColumns = [162, 486, 811, 1135, 1460];
   const termY = 285;
   const altYs = [402, 515, 627, 740];
-  const radioXs = [409, 735, 1059, 1384];
-  const radioYs = [247, 281, 314, 348];
 
-  const makeInput = (type, className, id, left, top, width, height, extra = {}) => {
-    const el = document.createElement(type === 'textarea' ? 'textarea' : 'input');
+  const connectorLefts = [286, 611, 936, 1261];
+  const connectorTop = 198;
+  const connectorRowGaps = [0, 33, 66, 99];
+
+  const makeInput = (className, id, left, top, width, height, extra = {}) => {
+    const el = document.createElement(extra.tag || 'input');
+    if (el.tagName === 'TEXTAREA') {
+      el.rows = extra.rows || 1;
+    } else {
+      el.type = extra.type || 'text';
+    }
     el.className = className;
     el.id = id;
-    if (el.tagName === 'INPUT') el.type = extra.type || 'text';
     el.name = id;
     el.autocomplete = 'off';
     el.spellcheck = false;
@@ -25,29 +30,69 @@
     el.style.width = `${width}px`;
     el.style.height = `${height}px`;
     if (extra.ariaLabel) el.setAttribute('aria-label', extra.ariaLabel);
+    if (extra.readOnly) el.readOnly = true;
     return el;
   };
 
-  const makeRadio = (name, value, left, top) => {
-    const el = document.createElement('input');
-    el.type = 'radio';
-    el.className = 'radio-box';
-    el.name = name;
-    el.value = value;
-    el.style.left = `${left}px`;
-    el.style.top = `${top}px`;
-    el.setAttribute('aria-label', `${name} ${value}`);
-    return el;
+  const addConnectorGroup = (groupIndex, left) => {
+    const group = document.createElement('div');
+    group.className = 'connector-group';
+    group.style.left = `${left}px`;
+    group.style.top = `${connectorTop}px`;
+    group.setAttribute('aria-label', `Connector group ${groupIndex + 1}`);
+
+    const values = [
+      { value: 'AND', label: 'AND', rowClass: '' },
+      { value: 'w/p', label: 'w/p', rowClass: '' },
+      { value: 'w/s', label: 'w/s', rowClass: '' },
+      { value: 'w/#', label: 'w/', rowClass: 'connector-row--distance' }
+    ];
+
+    values.forEach((item, rowIndex) => {
+      const row = document.createElement('label');
+      row.className = `connector-row ${item.rowClass}`.trim();
+      row.style.marginTop = `${connectorRowGaps[rowIndex]}px`;
+
+      const input = document.createElement('input');
+      input.type = 'radio';
+      input.className = 'connector-input';
+      input.name = `connector-${groupIndex + 1}`;
+      input.value = item.value;
+      if (rowIndex === 0) input.checked = true;
+
+      const box = document.createElement('span');
+      box.className = 'connector-box';
+
+      const text = document.createElement('span');
+      text.className = 'connector-label';
+      text.textContent = item.label;
+
+      row.appendChild(input);
+      row.appendChild(box);
+      row.appendChild(text);
+
+      if (item.value === 'w/#') {
+        const num = document.createElement('input');
+        num.type = 'number';
+        num.min = '1';
+        num.step = '1';
+        num.inputMode = 'numeric';
+        num.className = 'distance-field';
+        num.id = `count${groupIndex + 1}`;
+        num.placeholder = '#';
+        num.setAttribute('aria-label', `Distance for connector group ${groupIndex + 1}`);
+        row.appendChild(num);
+      }
+
+      group.appendChild(row);
+    });
+
+    return group;
   };
 
-  const termFieldIds = columns.map((_, index) => [
-    `term-${index + 1}`,
-    ...Array.from({ length: 4 }, (_, altIndex) => `c${index + 1}-alt${altIndex + 1}`)
-  ]).flat();
-
-  // Issue, search, database, and clear button overlay.
+  // Issue.
   form.appendChild(
-    makeInput('input', 'field issue-field', 'issue', 232, 174, 1482, 34, {
+    makeInput('field issue-field', 'issue', 226, 122, 1500, 36, {
       ariaLabel: 'Issue'
     })
   );
@@ -55,41 +100,39 @@
   // Term and alternative fields.
   columns.forEach((left, index) => {
     form.appendChild(
-      makeInput('input', 'field term-field', `term-${index + 1}`, left, termY, 244, 61, {
+      makeInput('field term-field', `term-${index + 1}`, left, termY, 244, 61, {
         ariaLabel: `Term ${index + 1}`
       })
     );
 
     altYs.forEach((top, altIndex) => {
       form.appendChild(
-        makeInput('input', 'field alt-field', `c${index + 1}-alt${altIndex + 1}`, altColumns[index], top, 243, 58, {
+        makeInput('field alt-field', `c${index + 1}-alt${altIndex + 1}`, altColumns[index], top, 243, 58, {
           ariaLabel: `Alternative ${index + 1}.${altIndex + 1}`
         })
       );
     });
   });
 
-  // Search area and database line.
-  const searchField = makeInput('textarea', 'field search-field', 'search', 106, 662, 1570, 382, {
-    ariaLabel: 'Search'
+  // Connector groups.
+  connectorLefts.forEach((left, index) => {
+    form.appendChild(addConnectorGroup(index, left));
   });
-  searchField.readOnly = true;
+
+  // Search area and database line.
+  const searchField = makeInput('field search-field', 'search', 76, 868, 1608, 118, {
+    tag: 'textarea',
+    ariaLabel: 'Search',
+    readOnly: true,
+    placeholder: 'Your assembled search string will appear here.'
+  });
   form.appendChild(searchField);
 
   form.appendChild(
-    makeInput('input', 'field database-field', 'database', 259, 1048, 1467, 30, {
+    makeInput('field database-field', 'database', 259, 1048, 1467, 30, {
       ariaLabel: 'Database'
     })
   );
-
-  // Connector checkboxes.
-  radioXs.forEach((left, columnIndex) => {
-    ['AND', 'w/p', 'w/s', 'w/#'].forEach((value, radioIndex) => {
-      const radio = makeRadio(`connector-${columnIndex + 1}`, value, left, radioYs[radioIndex]);
-      if (radioIndex === 0) radio.checked = true;
-      form.appendChild(radio);
-    });
-  });
 
   const clearButton = document.createElement('button');
   clearButton.type = 'button';
@@ -100,9 +143,8 @@
   form.appendChild(clearButton);
 
   const allFields = [...form.querySelectorAll('input.field, textarea.field')];
-  const allRadios = [...form.querySelectorAll('input[type="radio"]')];
-  const radiosByGroup = [...new Set(allRadios.map((radio) => radio.name))].map((name) =>
-    allRadios.filter((radio) => radio.name === name)
+  const radioGroups = [...form.querySelectorAll('.connector-group')].map((group) =>
+    [...group.querySelectorAll('input[type="radio"]')]
   );
 
   const fit = () => {
@@ -121,26 +163,28 @@
     return `(${items.join(' OR ')})`;
   };
 
-  const selectedConnector = (groupName) => {
-    const group = radiosByGroup.find((items) => items[0]?.name === groupName);
+  const selectedConnector = (groupIndex) => {
+    const group = radioGroups[groupIndex];
     const checked = group?.find((radio) => radio.checked);
     return checked?.value || 'AND';
   };
 
   const buildSearch = () => {
-    const columnsExpr = columns.map((_, index) => {
-      const values = [
-        document.getElementById(`term-${index + 1}`)?.value || '',
-        ...Array.from({ length: 4 }, (_, altIndex) => document.getElementById(`c${index + 1}-alt${altIndex + 1}`)?.value || '')
-      ];
-      return buildGroupExpression(values);
-    }).filter(Boolean);
+    const columnsExpr = columns
+      .map((_, index) => {
+        const values = [
+          document.getElementById(`term-${index + 1}`)?.value || '',
+          ...Array.from({ length: 4 }, (_, altIndex) => document.getElementById(`c${index + 1}-alt${altIndex + 1}`)?.value || '')
+        ];
+        return buildGroupExpression(values);
+      })
+      .filter(Boolean);
 
     if (!columnsExpr.length) return '';
 
     let result = columnsExpr[0];
     for (let i = 0; i < columnsExpr.length - 1; i += 1) {
-      const connector = selectedConnector(`connector-${i + 1}`);
+      const connector = selectedConnector(i);
       const nextExpr = columnsExpr[i + 1];
       if (connector === 'w/#') {
         const countInput = document.getElementById(`count${i + 1}`);
@@ -161,7 +205,7 @@
   const save = () => {
     const data = {};
     for (const field of allFields) data[field.id] = field.value;
-    for (const group of radiosByGroup) {
+    for (const group of radioGroups) {
       const checked = group.find((radio) => radio.checked);
       if (checked) data[checked.name] = checked.value;
     }
@@ -182,13 +226,9 @@
           field.value = data[field.id];
         }
       }
-      for (const group of radiosByGroup) {
-        const groupName = group[0]?.name;
-        const value = data[groupName];
-        if (value) {
-          const radio = group.find((item) => item.value === value);
-          if (radio) radio.checked = true;
-        }
+      for (const group of radioGroups) {
+        const checked = group.find((radio) => data[radio.name] === radio.value);
+        if (checked) checked.checked = true;
       }
     } catch {
       // Ignore corrupt storage.
@@ -202,7 +242,7 @@
 
   const clear = () => {
     for (const field of allFields) field.value = '';
-    for (const group of radiosByGroup) {
+    for (const group of radioGroups) {
       const first = group[0];
       if (first) first.checked = true;
     }
